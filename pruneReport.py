@@ -1,4 +1,4 @@
-#Fix IMS CSV Report
+#Fix formatting IMS CSV Report
 
 import csv
 def readCSV(fileName):
@@ -55,13 +55,13 @@ def process(row):
 writeRows = []
 writeHeader = ["Patient Name","Visit Date","IDC","ICD_SHORT_DESC","Billing Detail Diagnosis 1 Desc"]
 
-csvAI = readCSV(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset3\IMS AI Macular Degeneration.csv")
+csvAI = readCSV(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset5-glaucoma\IMS DATA\glaucoma-IMS.csv")
 for x in range(len(csvAI)):
     #print (x)
     writeRows.append(process(csvAI[x]))
 
 
-outputFile =  r"C:\Users\ntak\Desktop\USB\DataSets\Dataset3\macular degeneration modified.csv"
+outputFile =  r"C:\Users\ntak\Desktop\USB\DataSets\Dataset5-glaucoma\IMS DATA\glaucoma-IMS-modified.csv"
 
 writeCSV(writeHeader, writeRows, outputFile)
 print()

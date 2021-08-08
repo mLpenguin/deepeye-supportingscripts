@@ -1,4 +1,7 @@
 import os,csv,glob
+from typing_extensions import final
+
+LOG = False
 
 directory = r"C:\Users\ntak\Desktop\USB\\"
 
@@ -29,8 +32,8 @@ def readIds(fileloc):
             #print (line)
             idArray.append(line)
             
-readIds(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset3\Macular ID.txt")
-readPatientNames(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset3\Macular Names.txt")
+readIds(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\diabetic retinopathy ID.txt")
+readPatientNames(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\diabetic retinopathy names.txt")
 
 
 idToNameConverter = {}
@@ -44,7 +47,8 @@ def convertPatientIdToName(iD):
     
     returnValue = "NONE"
     for x in range(0,len(idArray)):
-        if iD in idArray[x]:
+
+        if iD == idArray[x]:
             returnValue = namesArray[x]
 
     return returnValue
@@ -88,7 +92,7 @@ def writeCSV(header, rows, filename):
         csvwriter.writerows(rows)
 
 #Read "dosPatientIcdSide.csv" and output to array
-DOSPatientNameICD = readCSV(r"DataSets\Dataset3\dosPatientIcdSide.csv")
+DOSPatientNameICD = readCSV(r"DataSets\Dataset4\dosIcdDescSide.csv")
 
 
 
@@ -100,9 +104,8 @@ for x in range(0,len(DOSPatientNameICD)):
     
     
     csVDOS = DOSPatientNameICD[x][0].split("/")
-    #print(eachFile)
-    month = str(csVDOS[0])
-    day = str(csVDOS[1])
+    month = str(csVDOS[0]).zfill(2)
+    day = str(csVDOS[1]).zfill(2)
     year = str(csVDOS[2])
     csVDOS = year+month+day
     DOSPatientNameICD[x][0] = csVDOS
@@ -112,7 +115,14 @@ for x in range(0,len(DOSPatientNameICD)):
 mLCsvRows = []
 mLCsvHeader = ["FILENAME", "ICD_ROOT", "ICD","ICD_SHORT_DESC", "ICD_SIDE"]
 ff = 0
-d = glob.glob(directory+"DataSets/Dataset3/sorted/good/*.jpg")
+d = glob.glob(directory+"DataSets/Dataset4/sorted/*.jpg")
+
+if (LOG):
+    p= []
+
+    p.append(d[0])
+    #d = []
+    d = p
 
 '''
 import pickle
@@ -151,11 +161,13 @@ print ("Number of images read in Directory: " + str(dd))
 for eachFile in d:
     printProgressBar(ff, dd, prefix = 'Progress:', suffix = 'Complete', length = 50)
     ff += 1
-    #print(eachFile)
     foundEntry = False
     eachFile = eachFile.split("\\")
 
     eachFile = eachFile[len(eachFile)-1]
+
+    if(LOG): print("eachFile: ", eachFile)
+
     filePatientID = eachFile.split("-")
     #obtain patientID from filename
     fileSide = filePatientID[2][0].lower()
@@ -167,6 +179,7 @@ for eachFile in d:
 
     #Find Corresponding Entry in CSV
     for x in range(len(DOSPatientNameICD)):
+        #if(LOG): print("Location in csv: ", x)
         #Find corresponding DOSPatientNameICD Entry
         #print("Bye")
         #print(fileDateOfService)
@@ -175,25 +188,13 @@ for eachFile in d:
         if(foundEntry): #Remove duplicates
             break
 
-
-        if ((convertPatientIdToName(filePatientID) in DOSPatientNameICD[x][1]) and (fileDateOfService in DOSPatientNameICD[x][0])):
-            #print("HI")
-            
-            """ Ignore Side
-            #Write CSV
-            temp = []
-            temp.append(eachFile)                       #File Name
-            temp.append(DOSPatientNameICD[x][2][:-1])   #Cut off last numberr of ICD
-            temp.append(DOSPatientNameICD[x][2])        #Full ICD
-            temp.append(DOSPatientNameICD[x][3])        #Side
-            #print(temp)
-            foundEntry = True
-            mLCsvRows.append(temp)
-            """
-            
-
-            
-            if (fileSide in DOSPatientNameICD[x][4]) or ("b" in DOSPatientNameICD[x][4]):          
+        if(LOG): print("NAME: ", convertPatientIdToName(filePatientID), DOSPatientNameICD[x][1])
+        if(LOG): print("DOS: ", fileDateOfService, DOSPatientNameICD[x][0])
+        if ((convertPatientIdToName(filePatientID) == DOSPatientNameICD[x][1]) and (fileDateOfService in DOSPatientNameICD[x][0])):
+            if(LOG): print("FOUND NAME: ", filePatientID)
+           
+            if (fileSide == DOSPatientNameICD[x][4]) or ("b" == DOSPatientNameICD[x][4]): #only save if side matches code        
+                
                 #Write CSV
                 temp = []
                 temp.append(eachFile)                       #File Name
@@ -201,7 +202,7 @@ for eachFile in d:
                 temp.append(DOSPatientNameICD[x][2])        #Full ICD
                 temp.append(DOSPatientNameICD[x][3])        #ICD_SHORT_DESC
                 temp.append(DOSPatientNameICD[x][4])        #ICD_SIDE
-                #print(temp)
+                if(LOG): print("append: ", temp)
                 foundEntry = True
                 mLCsvRows.append(temp)
             
@@ -238,7 +239,7 @@ for eachFile in d:
 
     #if(not foundEntry): # If not found assume normal. Cant do cuz some images are not 
                         # coded in the list of diagnosis. so some images are left undiagnosed.
-        
+        #flawed, cant do
 
 
 
@@ -258,9 +259,8 @@ for eachFile in d:
     """
 
 
-    #print(fileDateOfService)
-#print(DOSPatientNameICD[0])
-writeCSV(mLCsvHeader, mLCsvRows, r"DataSets\Dataset3\dataset3GoodSideFixed.csv") #C:\\Users\\ntak\\Desktop\\USB\\ file name prefix
+
+writeCSV(mLCsvHeader, mLCsvRows, r"DataSets\Dataset4\dataset4.csv") #C:\\Users\\ntak\\Desktop\\USB\\ file name prefix
 print()
 print("Compleate")
 print("Num of entries: " + str(len(mLCsvRows)))

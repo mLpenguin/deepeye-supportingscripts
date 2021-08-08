@@ -2,7 +2,8 @@ import os,csv,glob
 
 from shutil import copyfile
 
-directory = r"C:\Users\ntak\Desktop\USB\DataSets\Dataset3\\"
+directory = r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\\"
+DEBUG = False
 
 print("###########START###########")
 
@@ -14,7 +15,7 @@ def readPatientNames(fileloc):
             y = x.split(",")
             #print(y)
             z = y[0] + " " + y[1]
-            namesArray.append(x)
+            namesArray.append(x.lower())
 
 idArray = []
 def readIds(fileloc):
@@ -32,8 +33,8 @@ def readIds(fileloc):
             #print (line)
             idArray.append(line)
             
-readIds(directory + "Macular ID.txt")
-readPatientNames(directory + "Macular Names.txt")
+readIds(directory + "diabetic retinopathy ID.txt")
+readPatientNames(directory + "diabetic retinopathy names.txt")
 
 nameToIdConverter = {}
 print("Names Array Lenght: "+ str(len(namesArray)))
@@ -41,11 +42,13 @@ print("Id Array Lenght: "+ str(len(idArray)))
 
 
 ######Change to idArray[x] in production######
-for x in range(0,len(namesArray)):
+for x in range(0,len(namesArray)): #Build name/id dictionary
     nameToIdConverter[str(namesArray[x])] = str(idArray[x])
 
+if(DEBUG): print(nameToIdConverter)
 
-d = directory + "DOSPatientName.csv"
+
+d = directory + "DOSPatientNameModified.csv"
 DOSPatientName = []
 
 with open(d, 'r') as file:
@@ -92,13 +95,14 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
 OptosDirectory = "X:/OptosArchive/site_15028/Secondary/"
 
 
+
 listOfFiles = []
-with open(OptosDirectory + "contents.txt") as f:
+with open(OptosDirectory + "contents.txt") as f: #Assume contents has list of all files in directory
     listOfFiles = f.readlines()
 # you may also want to remove whitespace characters like `\n` at the end of each line
 listOfFiles = [x.strip() for x in listOfFiles] 
-listOfFiles.pop(0)
-listOfFiles.pop(0)
+listOfFiles.pop(0) #remove header
+listOfFiles.pop(0) #remove inital blank row
 #1473
 fileList = []
 NoCopyList = []
@@ -109,16 +113,16 @@ yy = len(DOSPatientName)
 
 for y in range(len(DOSPatientName)):
 
-    printProgressBar(ff, yy, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    if(not DEBUG): printProgressBar(ff, yy, prefix = 'Progress:', suffix = 'Complete', length = 50)
     ff += 1
     #print (y)
     DOS = DOSPatientName[y][0]
-    PATIENTNAME = DOSPatientName[y][1]
+    PATIENTNAME = str(DOSPatientName[y][1]).lower()
 
     DOS = DOS.split("/")
 
-    month = str(DOS[0])
-    day = str(DOS[1])
+    month = str(DOS[0]).zfill(2)
+    day = str(DOS[1]).zfill(2)
     year = str(DOS[2])
 
     p = nameToIdConverter[PATIENTNAME]
@@ -128,24 +132,40 @@ for y in range(len(DOSPatientName)):
     isCopied = False
 
     for x in range(0,len(ids)):
+
+        if(DEBUG): print("ID: ", ids[x], ids)
         
         for i in range(0,len(listOfFiles)):
             #print (i)
-            eachFile = str(listOfFiles[i])
-            #print(ids[x])
-            if (year+month+day+"@" in eachFile) and (ids[x] in eachFile):
-                #print(eachFile)
-                fileList.append(eachFile)
-                isCopied = True
+            skip = False
+            try:
+                eachFile = str(listOfFiles[i])
+                #if(DEBUG): print("File: ", eachFile)
+                eachFile_ID = eachFile.split("-")[0]
+                eachFile_DATE = str(eachFile.split("-")[1]).split("@")[0]
 
-                copyfile(OptosDirectory+eachFile, directory +"OPTOS_OUTPUT/"+eachFile)
-                ##copyfile("X:/site_15028/Secondary"+"/"+eachFile, "C:/Users/rcexam01/Desktop/OptoDownload/ImageDownload/" +eachFile)
+            except: #if cant split discard
+                skip = True
+                pass
+
+            if(not skip):
+                #if(DEBUG): print(eachFile_ID, eachFile_DATE)
+                #print(ids[x])
+                #if(DEBUG): print("Found: ", year+month+day, eachFile_DATE)
+                #if(DEBUG): print("Found: ", ids[x], eachFile_ID)
+                if (year+month+day == eachFile_DATE) and (ids[x] == eachFile_ID):
+                    if(DEBUG): print("Found: ", ids[x], eachFile_ID)
+                    fileList.append(eachFile)
+                    isCopied = True
+
+                    if(not DEBUG): copyfile(OptosDirectory+eachFile, directory +"OPTOS_OUTPUT/"+eachFile)
+                    ##copyfile("X:/site_15028/Secondary"+"/"+eachFile, "C:/Users/rcexam01/Desktop/OptoDownload/ImageDownload/" +eachFile)
 
 
     if (not isCopied):
         f = open(directory +"OPTOS_OUTPUT/" + "NoCopyimageDirectory.txt","a")
-        f.write(str(DOSPatientName[y]))
-        f.write("\n")
+        if(not DEBUG): f.write(str(DOSPatientName[y]))
+        if(not DEBUG): f.write("\n")
         f.close()
 
 
