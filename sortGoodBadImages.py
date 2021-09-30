@@ -1,6 +1,6 @@
 import csv,glob
 
-directory = r"C:\Users\ntak\Desktop\USB\DataSets\Dataset1\\"
+directory = r"C:\Users\ntak\Desktop\USB\DataSets\GoodBadTrain\Dataset3\\"
 
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
     """
@@ -36,17 +36,17 @@ def writeCSV(header, rows, filename):
         csvwriter.writerows(rows)
 
 
-goodImages = glob.glob(directory+"Images/Bad Removed Only Best Best/*.jpg")
+goodImages = glob.glob(directory+"sorted/*.jpg")
 for x in range(len(goodImages)):
     temp = str(goodImages[x])
-    temp = temp.replace(directory+"Images/Bad Removed Only Best Best\\", '')
+    temp = temp.replace(directory+"sorted\\", '')
     goodImages[x] = temp
 
 
-allImages = glob.glob(directory+"Images/_Original/*.jpg")
+allImages = glob.glob(directory+"OPTOS_OUTPUT-dataset3\*.jpg")
 for x in range(len(allImages)):
     temp = str(allImages[x])
-    temp = temp.replace(directory+"Images/_Original\\", '')
+    temp = temp.replace(directory+"OPTOS_OUTPUT-dataset3\\", '')
     allImages[x] = temp
 
 print(goodImages[0])
@@ -75,7 +75,7 @@ for eachFile in allImages:
 
 
 
-writeCSV(mLCsvHeader, mLCsvRows, directory + "dataset1BadGoodImages.csv")
+writeCSV(mLCsvHeader, mLCsvRows, directory + "dataset3BadGoodImages.csv")
 print()
 print("Compleate")
 print("Num of entries: " + str(len(mLCsvRows)))

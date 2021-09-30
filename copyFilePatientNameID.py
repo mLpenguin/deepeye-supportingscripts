@@ -2,7 +2,7 @@ import os,csv,glob
 
 from shutil import copyfile
 
-directory = r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\\"
+directory = r"C:\Users\ntak\Desktop\USB\DataSets\Dataset8-hypertensiveretinopathy\\"
 DEBUG = False
 
 print("###########START###########")
@@ -33,8 +33,8 @@ def readIds(fileloc):
             #print (line)
             idArray.append(line)
             
-readIds(directory + "diabetic retinopathy ID.txt")
-readPatientNames(directory + "diabetic retinopathy names.txt")
+readIds(directory + "hypertensive retinopathy ID.txt")
+readPatientNames(directory + "hypertensive retinopathy names.txt")
 
 nameToIdConverter = {}
 print("Names Array Lenght: "+ str(len(namesArray)))
@@ -48,7 +48,7 @@ for x in range(0,len(namesArray)): #Build name/id dictionary
 if(DEBUG): print(nameToIdConverter)
 
 
-d = directory + "DOSPatientNameModified.csv"
+d = directory + "DOSpatientname.csv"
 DOSPatientName = []
 
 with open(d, 'r') as file:

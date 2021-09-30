@@ -1,4 +1,5 @@
 import os,csv,glob
+import sys
 from typing_extensions import final
 
 LOG = False
@@ -32,9 +33,10 @@ def readIds(fileloc):
             #print (line)
             idArray.append(line)
             
-readIds(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\diabetic retinopathy ID.txt")
-readPatientNames(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\diabetic retinopathy names.txt")
-
+#readIds(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\diabetic retinopathy ID.txt")
+readIds(sys.argv[1])
+#readPatientNames(r"C:\Users\ntak\Desktop\USB\DataSets\Dataset4\diabetic retinopathy names.txt")
+readPatientNames(sys.argv[2])
 
 idToNameConverter = {}
 print("Names Array Lenght: "+ str(len(namesArray)))
@@ -92,7 +94,8 @@ def writeCSV(header, rows, filename):
         csvwriter.writerows(rows)
 
 #Read "dosPatientIcdSide.csv" and output to array
-DOSPatientNameICD = readCSV(r"DataSets\Dataset4\dosIcdDescSide.csv")
+#DOSPatientNameICD = readCSV(r"DataSets\Dataset4\dosIcdDescSide.csv")
+DOSPatientNameICD = readCSV(sys.argv[3])
 
 
 
@@ -115,7 +118,8 @@ for x in range(0,len(DOSPatientNameICD)):
 mLCsvRows = []
 mLCsvHeader = ["FILENAME", "ICD_ROOT", "ICD","ICD_SHORT_DESC", "ICD_SIDE"]
 ff = 0
-d = glob.glob(directory+"DataSets/Dataset4/sorted/*.jpg")
+#d = glob.glob(directory+"DataSets/Dataset4/sorted/*.jpg")
+d = glob.glob(directory+sys.argv[4])
 
 if (LOG):
     p= []
@@ -159,7 +163,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
 #num of files
 print ("Number of images read in Directory: " + str(dd))
 for eachFile in d:
-    printProgressBar(ff, dd, prefix = 'Progress:', suffix = 'Complete', length = 50)
+    #printProgressBar(ff, dd, prefix = 'Progress:', suffix = 'Complete', length = 50)
     ff += 1
     foundEntry = False
     eachFile = eachFile.split("\\")
@@ -193,7 +197,7 @@ for eachFile in d:
         if ((convertPatientIdToName(filePatientID) == DOSPatientNameICD[x][1]) and (fileDateOfService in DOSPatientNameICD[x][0])):
             if(LOG): print("FOUND NAME: ", filePatientID)
            
-            if (fileSide == DOSPatientNameICD[x][4]) or ("b" == DOSPatientNameICD[x][4]): #only save if side matches code        
+            if (fileSide in DOSPatientNameICD[x][4]) or ("b" in DOSPatientNameICD[x][4]): #only save if side matches code        
                 
                 #Write CSV
                 temp = []
@@ -260,7 +264,8 @@ for eachFile in d:
 
 
 
-writeCSV(mLCsvHeader, mLCsvRows, r"DataSets\Dataset4\dataset4.csv") #C:\\Users\\ntak\\Desktop\\USB\\ file name prefix
+#writeCSV(mLCsvHeader, mLCsvRows, r"DataSets\Dataset4\dataset4.csv") #C:\\Users\\ntak\\Desktop\\USB\\ file name prefix
+writeCSV(mLCsvHeader, mLCsvRows, sys.argv[5])
 print()
 print("Compleate")
 print("Num of entries: " + str(len(mLCsvRows)))
