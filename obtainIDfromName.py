@@ -90,7 +90,7 @@ def getPerformedOnFromRow(rowNum):
 
 namesArray = []
 def readPatientNames():
-    with open(r'C:\Users\ntak\Desktop\USB\DataSets\Dataset8-hypertensiveretinopathy\hypertensive retinopathy names - Copy.txt') as my_file:
+    with open(r'C:\Users\ntak\Desktop\USB\DataSets\Dataset8-hypertensiveretinopathy\hypertensive retinopathy names.txt') as my_file:
         for line in my_file:
             x = line.rstrip('\n')
             y = x.split(",")

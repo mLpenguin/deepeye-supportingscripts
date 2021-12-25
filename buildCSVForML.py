@@ -183,11 +183,6 @@ for eachFile in d:
 
     #Find Corresponding Entry in CSV
     for x in range(len(DOSPatientNameICD)):
-        #if(LOG): print("Location in csv: ", x)
-        #Find corresponding DOSPatientNameICD Entry
-        #print("Bye")
-        #print(fileDateOfService)
-        #print(DOSPatientNameICD[x][0])
 
         if(foundEntry): #Remove duplicates
             break

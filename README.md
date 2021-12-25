@@ -1,0 +1,2 @@
+# Supporting Scripts for Deepeye project
+These are supporting scripts for the Ophthalmology deepeye machine learning project. Mainly used to prepare or manipulate data for input data for machine learning training.

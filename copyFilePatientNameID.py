@@ -41,7 +41,7 @@ print("Names Array Lenght: "+ str(len(namesArray)))
 print("Id Array Lenght: "+ str(len(idArray)))
 
 
-######Change to idArray[x] in production######
+
 for x in range(0,len(namesArray)): #Build name/id dictionary
     nameToIdConverter[str(namesArray[x])] = str(idArray[x])
 
